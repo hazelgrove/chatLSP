@@ -1,6 +1,6 @@
 {
-  "name": "chatlsp",
-  "displayName": "ChatLSP",
+  "name": "hello-world-solidjs",
+  "displayName": "hello-world-solidjs",
   "description": "A hello world sample extension to demonstrate using SolidJS + Vite with the Webview UI Toolkit for VS Code.",
   "version": "0.0.1",
   "engines": {
@@ -10,8 +10,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "hello-world.showHelloWorld",
-        "title": "ChatLSP (SolidJS): Show"
+        "command": "hello-world.showChatLSP",
+        "title": "Hello World (SolidJS): Show"
       }
     ]
   },

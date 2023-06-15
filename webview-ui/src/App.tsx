@@ -32,7 +32,7 @@ const App: Component = () => {
 
   return (
     <main>
-      <h1>ChatLSP</h1>
+      <h1>Hello world!</h1>
       <vscode-button onClick={handleHowdyClick}>Howdy!</vscode-button>
     </main>
   );

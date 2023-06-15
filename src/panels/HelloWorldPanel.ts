@@ -12,8 +12,8 @@ import { getNonce } from "../utilities/getNonce";
  * - Setting the HTML (and by proxy CSS/JavaScript) content of the webview panel
  * - Setting message listeners so data can be passed between the webview and extension
  */
-export class ChatLSPPanel {
-  public static currentPanel: ChatLSPPanel | undefined;
+export class HelloWorldPanel {
+  public static currentPanel: HelloWorldPanel | undefined;
   private readonly _panel: WebviewPanel;
   private _disposables: Disposable[] = [];
 
@@ -44,16 +44,16 @@ export class ChatLSPPanel {
    * @param extensionUri The URI of the directory containing the extension.
    */
   public static render(extensionUri: Uri) {
-    if (ChatLSPPanel.currentPanel) {
+    if (HelloWorldPanel.currentPanel) {
       // If the webview panel already exists reveal it
-      ChatLSPPanel.currentPanel._panel.reveal(ViewColumn.One);
+      HelloWorldPanel.currentPanel._panel.reveal(ViewColumn.One);
     } else {
       // If a webview panel does not already exist create and show a new one
       const panel = window.createWebviewPanel(
         // Panel view type
-        "showChatLSP",
+        "showHelloWorld",
         // Panel title
-        "ChatLSP",
+        "Hello World",
         // The editor column the panel should be displayed in
         ViewColumn.One,
         // Extra panel configurations
@@ -65,7 +65,7 @@ export class ChatLSPPanel {
         }
       );
 
-      ChatLSPPanel.currentPanel = new ChatLSPPanel(panel, extensionUri);
+      HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri);
     }
   }
 
@@ -73,7 +73,7 @@ export class ChatLSPPanel {
    * Cleans up and disposes of webview resources when the webview panel is closed.
    */
   public dispose() {
-    ChatLSPPanel.currentPanel = undefined;
+    HelloWorldPanel.currentPanel = undefined;
 
     // Dispose of the current webview panel
     this._panel.dispose();
@@ -115,7 +115,7 @@ export class ChatLSPPanel {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
-          <title>ChatLSP</title>
+          <title>Hello World</title>
         </head>
         <body>
           <div id="root"></div>
