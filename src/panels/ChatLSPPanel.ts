@@ -12,13 +12,13 @@ import { getNonce } from "../utilities/getNonce";
  * - Setting the HTML (and by proxy CSS/JavaScript) content of the webview panel
  * - Setting message listeners so data can be passed between the webview and extension
  */
-export class HelloWorldPanel {
-  public static currentPanel: HelloWorldPanel | undefined;
+export class ChatLSPPanel {
+  public static currentPanel: ChatLSPPanel | undefined;
   private readonly _panel: WebviewPanel;
   private _disposables: Disposable[] = [];
 
   /**
-   * The HelloWorldPanel class private constructor (called only from the render method).
+   * The ChatLSPPanel class private constructor (called only from the render method).
    *
    * @param panel A reference to the webview panel
    * @param extensionUri The URI of the directory containing the extension
@@ -44,9 +44,9 @@ export class HelloWorldPanel {
    * @param extensionUri The URI of the directory containing the extension.
    */
   public static render(extensionUri: Uri) {
-    if (HelloWorldPanel.currentPanel) {
+    if (ChatLSPPanel.currentPanel) {
       // If the webview panel already exists reveal it
-      HelloWorldPanel.currentPanel._panel.reveal(ViewColumn.One);
+      ChatLSPPanel.currentPanel._panel.reveal(ViewColumn.One);
     } else {
       // If a webview panel does not already exist create and show a new one
       const panel = window.createWebviewPanel(
@@ -65,7 +65,7 @@ export class HelloWorldPanel {
         }
       );
 
-      HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri);
+      ChatLSPPanel.currentPanel = new ChatLSPPanel(panel, extensionUri);
     }
   }
 
@@ -73,7 +73,7 @@ export class HelloWorldPanel {
    * Cleans up and disposes of webview resources when the webview panel is closed.
    */
   public dispose() {
-    HelloWorldPanel.currentPanel = undefined;
+    ChatLSPPanel.currentPanel = undefined;
 
     // Dispose of the current webview panel
     this._panel.dispose();
