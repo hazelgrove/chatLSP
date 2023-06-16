@@ -1,7 +1,14 @@
 import { commands, ExtensionContext, Webview, WebviewViewProvider,WebviewView, Uri, WebviewViewResolveContext, SnippetString, window,CancellationToken,  } from "vscode";
 import { ChatLSPPanel } from "./panels/ChatLSPPanel";
-import { getUri } from "../utilities/getUri";
+import { getUri } from "./utilities/getUri";
 import { getNonce } from "./utilities/getNonce";
+
+commands.registerTextEditorCommand('insertTEXT', (editor, edit) => {
+	editor.selections.forEach((selection, i) => {
+			let text = "<TEXT> ";// + i;
+			edit.insert(selection.active, text);  // insert at current cursor
+	})
+});
 
 export function activate(context: ExtensionContext) {
   // Create the show chatLSP command
@@ -44,6 +51,7 @@ class ColorsViewProvider implements WebviewViewProvider {
 	private _view?: WebviewView;
 
 	constructor(
+
 		private readonly _extensionUri: Uri,
 	) { }
 
@@ -65,13 +73,28 @@ class ColorsViewProvider implements WebviewViewProvider {
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-		webviewView.webview.onDidReceiveMessage(data => {
-			switch (data.type) {
-				case 'colorSelected':
-					{
-						window.activeTextEditor?.insertSnippet(new SnippetString(`#${data.value}`));
-						break;
-					}
+		
+
+		webviewView.webview.onDidReceiveMessage((message: any) => {
+			const command = message.command;
+			const text = message.text;
+
+			switch (command) {
+				case "hello":
+					// Code that should run in response to the hello message command
+					window.showInformationMessage(text);
+					return;
+			  case "paste":
+					
+					//window.showInformationMessage(text);
+					
+				commands.executeCommand("workbench.action.focusActiveEditorGroup");
+					//commands.executeCommand("workbench.action.files.newUntitledFile");
+					commands.executeCommand("insertTEXT");
+					//commands.executeCommand("editor.action.clipboardPasteAction", text);
+
+				// Add more switch case statements here as more webview message commands
+				// are created within the webview context (i.e. inside media/main.js)
 			}
 		});
 	}
@@ -90,45 +113,29 @@ class ColorsViewProvider implements WebviewViewProvider {
 	}
 
 	private _getHtmlForWebview(webview: Webview) {
-		// Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-		const scriptUri = webview.asWebviewUri(Uri.joinPath(this._extensionUri, 'media', 'main.js'));
+    // The CSS file from the SolidJS build output
+    const stylesUri = getUri(webview, this._extensionUri, ["webview-ui", "build", "assets", "index.css"]);
+    // The JS file from the SolidJS build output
+    const scriptUri = getUri(webview, this._extensionUri, ["webview-ui", "build", "assets", "index.js"]);
 
-		// Do the same for the stylesheet.
-		const styleResetUri = webview.asWebviewUri(Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
-		const styleVSCodeUri = webview.asWebviewUri(Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
-		const styleMainUri = webview.asWebviewUri(Uri.joinPath(this._extensionUri, 'media', 'main.css'));
+    const nonce = getNonce();
 
-		// Use a nonce to only allow a specific script to be run.
-		const nonce = getNonce();
-
-		return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-
-				<!--
-					Use a content security policy to only allow loading styles from our extension directory,
-					and only allow scripts that have a specific nonce.
-					(See the 'webview-sample' extension sample for img-src content security policy examples)
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-				<link href="${styleResetUri}" rel="stylesheet">
-				<link href="${styleVSCodeUri}" rel="stylesheet">
-				<link href="${styleMainUri}" rel="stylesheet">
-
-				<title>Cat Colors</title>
-			</head>
-			<body>
-				<ul class="color-list">
-				</ul>
-
-				<button class="add-color-button">Add Color</button>
-
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`;
-	}
+    // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+    return /*html*/ `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <link rel="stylesheet" type="text/css" href="${stylesUri}">
+          <title>ChatLSP</title>
+        </head>
+        <body>
+          <div id="root"></div>
+          <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
+        </body>
+      </html>
+    `;
+  }
 }

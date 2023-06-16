@@ -29,11 +29,18 @@ const App: Component = () => {
       text: "Hey there partner! 🤠",
     });
   }
+  function handlePasteClick() {
+    vscode.postMessage({
+      command: "paste",
+      text: "text to paste",
+    });
+  }
 
   return (
     <main>
-      <h1>Hello world!</h1>
+      <h1>ChatLSP</h1>
       <vscode-button onClick={handleHowdyClick}>Howdy!</vscode-button>
+      <vscode-button onClick={handlePasteClick}>Insert TEXT</vscode-button>
     </main>
   );
 };

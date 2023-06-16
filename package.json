@@ -12,7 +12,7 @@
 			"activitybar": [
 				{
 					"id": "myextension-sidebar-view",
-					"title": "My Extension",
+					"title": "ChatLSP",
 					"icon": "assets/icon.svg"
 				}
 			]
@@ -22,7 +22,7 @@
 				{
 					"type": "webview",
 					"id": "myextension-sidebar",
-					"name": "MyExtension",
+					"name": "Assistant Sidebar",
 					"icon": "assets/icon.svg",
 					"contextualTitle": "MyExtension"
 				}
